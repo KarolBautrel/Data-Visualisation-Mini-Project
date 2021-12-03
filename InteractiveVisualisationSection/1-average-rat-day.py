@@ -2,7 +2,7 @@ import pandas
 from datetime import datetime
 from pytz import utc
 import justpy as jp
-# wrzucamy kod uzyskany z Highchart do zmiennej w formie stringa
+
 chart_def = """
 {
     chart: {
@@ -69,16 +69,16 @@ day_average = data.groupby(["Day"]).mean()
 
 
 def app():
-    # Zainicjowanie strony w frameworku Quasar # main component
+  
     wp = jp.QuasarPage()
-    # Nagłówek (a = do jakiej strony)
+
     h1 = jp.QDiv(a=wp, text="Analysis of Course Reviews",
                  classes='''text-h2  text-center q-pt-md
-''')  # heading 1
-    # pointer1
+''') 
     p1 = jp.QDiv(a=wp, text="These graphs represent course review analysis:",
                  classes="""text-h5 q-pl-lg  q-pt-lg""")
     hc = jp.HighCharts(
+<<<<<<< HEAD
         a=wp, options=chart_def)  # options to przypisanie stringa z Highchart
     # Hierarchicznie mozemy dochodzic do zawartosci stringa z jsa, poniewaz jest on podobny do dict
     #hc.options.title.text = "Average rating by Day"
@@ -90,10 +90,13 @@ def app():
     # xAxis i dodac do niego day_average.index przekonwertowany na liste
     hc.options.xAxis.categories = list(day_average.index)
     # zmiana daty, series[0], poniewaz series to lista w ktorej jest dictionary
+=======
+        a=wp, options=chart_def)  
+>>>>>>> 1c938993429eafd0bee6200dbace03be2e7ab474
     hc.options.series[0].data = list(
         list(day_average["Rating"]))
     return wp
 
 
-# funkcja odpowiadajaca za wygenerowanie strony, jako argument przyjmuje funkcje, która buduje strone
+
 jp.justpy(app)
