@@ -10,10 +10,10 @@ chart_def = """
         inverted: false
     },
     title: {
-        text: 'Average rating by Day'
+        text: 'Which Day the People Are The Happiest'
     },
     subtitle: {
-        text: 'By whole courses'
+        text: ' '
     },
     xAxis: {
         reversed: false,
@@ -64,8 +64,10 @@ chart_def = """
 }
 """
 data = pandas.read_csv("reviews.csv", parse_dates=["Timestamp"])
-data["Day"] = data["Timestamp"].dt.date
-day_average = data.groupby(["Day"]).mean()
+data["Weekday"] = data["Timestamp"].dt.strftime("%A")
+data["Daynumber"] = data["Timestamp"].dt.strftime('%w')
+weekday_average = data.groupby(['Weekday', 'Daynumber']).mean()
+weekday_average = weekday_average.sort_values("Daynumber")
 
 
 def app():
@@ -79,19 +81,11 @@ def app():
     p1 = jp.QDiv(a=wp, text="These graphs represent course review analysis:",
                  classes="""text-h5 q-pl-lg  q-pt-lg""")
     hc = jp.HighCharts(
-        a=wp, options=chart_def)  # options to przypisanie stringa z Highchart
-    # Hierarchicznie mozemy dochodzic do zawartosci stringa z jsa, poniewaz jest on podobny do dict
-    #hc.options.title.text = "Average rating by Day"
-    #hc.options.subtitle.text = " By whole courser "
-    #hc.options.xAxis.title.text = "Ratings"
-    #hc.options.yAxis.title.text = "Dates"
-   # hc.options.tooltip.pointFormat = "{point.y}"
-    # z racji tego, ze oryginalnie day_average_index nie jest czytany przez hc jako liczby, to musimy stworzyc nowy klucz w
-    # xAxis i dodac do niego day_average.index przekonwertowany na liste
-    hc.options.xAxis.categories = list(day_average.index)
-    # zmiana daty, series[0], poniewaz series to lista w ktorej jest dictionary
+        a=wp, options=chart_def)
+    hc.options.xAxis.categories = list(
+        weekday_average.index.get_level_values(0))
     hc.options.series[0].data = list(
-        list(day_average["Rating"]))
+        list(weekday_average["Rating"]))
     return wp
 
 
